@@ -1,6 +1,4 @@
-// Anali del Carmen Pérez Martínez
-// Francisco Gúzman Mora
-// Myha Tamara García García
+
 
 import express from 'express';
 import path from 'path';
