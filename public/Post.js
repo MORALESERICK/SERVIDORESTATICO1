@@ -1,6 +1,7 @@
+
 let posts = [];
 let pagina = 1;
-const porPagina = 10; // menos por post para que se vea mejor
+const porPagina = 10;
 
 // Cargar todos los posts del servidor
 async function getPosts() {
@@ -13,7 +14,6 @@ async function getPosts() {
   }
 }
 
-// Mostrar los posts de una página
 function mostrarPagina(numPagina) {
   const totalPaginas = Math.ceil(posts.length / porPagina);
   if (numPagina < 1) numPagina = 1;
@@ -37,22 +37,13 @@ function mostrarPagina(numPagina) {
     </tr>
   `).join('');
 
-  document.getElementById("paginaActual").innerText = 
-    `Página ${numPagina} de ${totalPaginas}`;
-  
+  document.getElementById("paginaActual").innerText = `Página ${numPagina} de ${totalPaginas}`;
   pagina = numPagina;
 }
 
-// Botones de navegación
-function siguientePagina() {
-  mostrarPagina(pagina + 1);
-}
+function siguientePagina() { mostrarPagina(pagina + 1); }
+function anteriorPagina() { mostrarPagina(pagina - 1); }
 
-function anteriorPagina() {
-  mostrarPagina(pagina - 1);
-}
-
-// Ver detalles del post
 async function verDetalles(id) {
   try {
     const resp = await fetch(`/api/post/${id}`);
@@ -71,19 +62,9 @@ async function verDetalles(id) {
   }
 }
 
-// Cerrar modal
-function closeModal() {
-  document.getElementById('modal').style.display = 'none';
-}
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+function editar(id) { alert(`Editar post ${id}`); }
+function eliminar(id) { alert(`Eliminar post ${id}`); }
 
-// Funciones demo (editar y eliminar)
-function editar(id) {
-  alert(`Editar post ${id}`);
-}
-
-function eliminar(id) {
-  alert(`Eliminar post ${id}`);
-}
-
-// Inicializar
 getPosts();
+
