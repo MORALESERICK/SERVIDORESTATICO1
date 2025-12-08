@@ -1,17 +1,14 @@
+let posts = [
+  { userId: 1, id: 1, title: "Título 1", body: "Contenido del post 1" },
+  { userId: 1, id: 2, title: "Título 2", body: "Contenido del post 2" },
+  // Agrega más si necesitas
+];
 
-let posts = [];
 let pagina = 1;
 const porPagina = 10;
 
-// Cargar todos los posts del servidor
-async function getPosts() {
-  try {
-    const resp = await fetch("/api/post");
-    posts = await resp.json();
-    mostrarPagina(pagina);
-  } catch (err) {
-    console.error("Error al cargar posts:", err);
-  }
+function getPosts() {
+  mostrarPagina(pagina);
 }
 
 function mostrarPagina(numPagina) {
@@ -30,36 +27,32 @@ function mostrarPagina(numPagina) {
       <td>${p.id}</td>
       <td>${p.title}</td>
       <td>
-        <button class="w3-button w3-small w3-teal" onclick="verDetalles(${p.id})">Ver</button>
-        <button class="w3-button w3-small w3-pink" onclick="editar(${p.id})">Editar</button>
-        <button class="w3-button w3-small w3-red" onclick="eliminar(${p.id})">Eliminar</button>
+        <button onclick="verDetalles(${p.id})">Ver</button>
+        <button onclick="editar(${p.id})">Editar</button>
+        <button onclick="eliminar(${p.id})">Eliminar</button>
       </td>
     </tr>
   `).join('');
 
-  document.getElementById("paginaActual").innerText = `Página ${numPagina} de ${totalPaginas}`;
+  document.getElementById("paginaActual").innerText = 
+    `Página ${numPagina} de ${totalPaginas}`;
+
   pagina = numPagina;
 }
 
 function siguientePagina() { mostrarPagina(pagina + 1); }
 function anteriorPagina() { mostrarPagina(pagina - 1); }
 
-async function verDetalles(id) {
-  try {
-    const resp = await fetch(`/api/post/${id}`);
-    const post = await resp.json();
-    const modalBody = document.getElementById('modal-body');
-    modalBody.innerHTML = `
-      <p><strong>ID:</strong> ${post.id}</p>
-      <p><strong>User ID:</strong> ${post.userId}</p>
-      <p><strong>Título:</strong> ${post.title}</p>
-      <p><strong>Contenido:</strong></p>
-      <p>${post.body}</p>
-    `;
-    document.getElementById('modal').style.display = 'block';
-  } catch (err) {
-    console.error("Error al obtener detalles:", err);
-  }
+function verDetalles(id) {
+  const post = posts.find(p => p.id === id);
+  const modalBody = document.getElementById('modal-body');
+  modalBody.innerHTML = `
+    <p><strong>ID:</strong> ${post.id}</p>
+    <p><strong>User ID:</strong> ${post.userId}</p>
+    <p><strong>Título:</strong> ${post.title}</p>
+    <p><strong>Contenido:</strong> ${post.body}</p>
+  `;
+  document.getElementById('modal').style.display = 'block';
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
@@ -67,4 +60,3 @@ function editar(id) { alert(`Editar post ${id}`); }
 function eliminar(id) { alert(`Eliminar post ${id}`); }
 
 getPosts();
-
