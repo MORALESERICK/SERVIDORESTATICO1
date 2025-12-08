@@ -1,93 +1,65 @@
-// Cargar todos los usuarios y poblar la tabla
-async function getData() {
-  try {
-    const resp = await fetch("/api/users");
-    const users = await resp.json();
-    const tbody = document.getElementById("tbl_users");
-    tbody.innerHTML = users.map(u => `
-      <tr>
-        <td>${u.id}</td>
-        <td>${u.name}</td>
-        <td>${u.username}</td>
-        <td>${u.email}</td>
-        <td>
-        <button class="w3-button w3-small w3-teal" onclick="verDetalles(${u.id})">Ver</button>
-        <button class="w3-button w3-small w3-pink" onclick="editar(${u.id})">Editar</button>
-        <button class="w3-button w3-small w3-red" onclick="eliminar(${u.id})">Eliminar</button>
-        </td>
-      </tr>
-    `).join('');
-  } catch (err) {
-    console.error("Error al cargar usuarios:", err);
-  }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
 
-// Ver detalles pidiendo al servidor
-async function verDetalles(id) {
-  try {
-    console.log("Solicitando detalles de", id); // ayuda a depurar
-    const resp = await fetch(`/api/users/${id}`);
-    const user = await resp.json();
-    const modalBody = document.getElementById('modal-body');
-    modalBody.innerHTML = `
-      <p><strong>Dirección:</strong> ${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}</p>
-      <p><strong>Coordenadas:</strong> ${user.address.geo.lat}, ${user.address.geo.lng}</p>
-      <p><strong>Teléfono:</strong> ${user.phone}</p>
-      <p><strong>Web:</strong> ${user.website}</p>
-      <p><strong>Compañía:</strong> ${user.company.name}, ${user.company.catchPhrase}, ${user.company.bs}</p>
-    `;
-    document.getElementById('modal').style.display = 'block';
-  } catch (err) {
-    console.error("Error al obtener detalles:", err);
-  }
-}
+  <div class="w3-bar w3-purple">
+    <div class="w3-right">
+      <button class="w3-bar-item w3-button" onclick="location.href='index.html'">Inicio</button>
+      <button class="w3-bar-item w3-button" onclick="location.href='Usuarios.html'">Usuarios</button>
+      <button class="w3-bar-item w3-button" onclick="location.href='Post.html'">Post</button>
+      <button class="w3-bar-item w3-button" onclick="location.href='Comentarios.html'">Comentarios</button>
+    </div>
+  </div>
 
-function closeModal() {
-  document.getElementById('modal').style.display = 'none';
-}
-// Funciones demo (editar y eliminar)
+  <div class="w3-center">
+    <h2> JSON DATA FAKE </h2>
+  </div>
 
-// Buscar usuario por ID
-async function buscar() {
-  const id = document.getElementById("buscarUsuario").value.trim();
-  const tbody = document.getElementById("tbl_users");
+  <!-- BOTON BUSCAR -->
+  <div class="w3-container w3-padding-16">
+    <input type="text" id="buscarUsuario" class="w3-input w3-border w3-round-large w3-quarter" placeholder="Buscar usuario...">
+    <!-- BOTON AGREGAR -->
+    <button class="w3-button w3-purple w3-round-large w3-margin-left" onclick="agregarUsuario()"> Agregar Usuario </button>
+    <button class="w3-button w3-teal w3-round-large w3-margin-left" onclick="buscar()">Buscar</button>  
+  </div>
 
-  // Si no se escribió nada, muestra todos los usuarios
-  if (!id) {
-    getData();
-    return;
-  }
+  <div class="w3-container w3-padding-16">
+    <table class="w3-table-all">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tbl_users"></tbody>
+    </table>
 
-  try {
-    const resp = await fetch(`/api/users/${id}`);
-    const user = await resp.json();
+    <!-- Modal para ver detalles del usuario -->
+    <div id="modal" class="w3-modal">
+      <div class="w3-modal-content w3-animate-top w3-card-4" style="max-width:500px">
+        <header class="w3-container w3-purple">
+          <span onclick="closeModal()" class="w3-button w3-display-topright">&times;</span>
+          <h3>Detalles del Usuario</h3>
+        </header>
+        <div class="w3-container" id="modal-body" style="padding:16px"></div>
+        <footer class="w3-container w3-purple">
+          <p><button class="w3-button w3-right" onclick="closeModal()">Cerrar</button></p>
+        </footer>
+      </div>
+    </div>
 
-    // Si no existe el usuario
-    if (!user.id) {
-      tbody.innerHTML = `<tr><td colspan="5" class="w3-center">Usuario no encontrado</td></tr>`;
-      return;
-    }
+  </div>
 
-    // Mostrar solo el usuario encontrado
-    tbody.innerHTML = `
-      <tr>
-        <td>${user.id}</td>
-        <td>${user.name}</td>
-        <td>${user.username}</td>
-        <td>${user.email}</td>
-        <td>
-          <button class="w3-button w3-small w3-teal" onclick="verDetalles(${user.id})">Ver</button>
-          <button class="w3-button w3-small w3-pink" onclick="editar(${user.id})">Editar</button>
-          <button class="w3-button w3-small w3-red" onclick="eliminar(${user.id})">Eliminar</button>
-        </td>
-      </tr>
-    `;
-  } catch (err) {
-    console.error("Error al buscar usuario:", err);
-    tbody.innerHTML = `<tr><td colspan="5" class="w3-center">Error al buscar usuario</td></tr>`;
-  }
-}
-
-
-
-getData();
+  <script src="Usuarios.js"></script>
+</body>
+</html>
